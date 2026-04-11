@@ -110,13 +110,16 @@ harness-expert 代理
 ```
 templates/
 └── _base/
-    ├── format-reference.md    格式骨架（agent/settings/hooks/command/CLAUDE.md 的格式参考）
-    ├── claude-md.md.tmpl      CLAUDE.md 结构模板
-    ├── settings.json.tmpl     各语言的权限模板
-    ├── hooks.json.tmpl        三级自动化的 hooks 模板
+    ├── format-reference.md      格式骨架（agent/settings/hooks/command/CLAUDE.md 的格式参考）
+    ├── claude-md.md.tmpl        CLAUDE.md 结构模板
+    ├── settings-typescript.json TypeScript 权限模板
+    ├── settings-c.json          C 权限模板
+    ├── hooks-minimal.json       最小自动化（无 hooks）
+    ├── hooks-standard.json      标准自动化（阻止危险命令 + 构建检查）
+    ├── hooks-strict.json        严格自动化（+ 自动 lint + 测试检查）
     └── rules/
-        ├── typescript.md.tmpl TypeScript 编码规范
-        └── c-language.md.tmpl C 编码规范
+        ├── typescript.md.tmpl   TypeScript 编码规范
+        └── c-language.md.tmpl   C 编码规范
 ```
 
 代理和命令的具体内容完全从问答中产生，不依赖预设模板。

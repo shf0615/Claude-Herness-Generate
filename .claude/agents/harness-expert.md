@@ -400,7 +400,7 @@ model: sonnet
 
 1. **参考格式骨架** — 读取 `templates/_base/format-reference.md` 了解文件格式
 2. **使用语言规则模板** — 读取 `templates/_base/rules/<language>.md.tmpl` 作为编码规范基础
-3. **使用 hooks 模板** — 读取 `templates/_base/hooks.json.tmpl` 获取对应自动化级别的 hooks
+3. **使用 hooks 模板** — 根据用户选择的自动化级别读取对应文件：`templates/_base/hooks-minimal.json`、`hooks-standard.json` 或 `hooks-strict.json`
 4. **使用 settings 模板** — 读取 `templates/_base/settings.json.tmpl` 获取对应语言的权限
 5. **代理和命令完全基于问答生成** — 根据阶段 2-4 中用户确认的设计，按格式骨架的格式直接生成内容。不读取任何预设的 agent 或 command 模板。
 6. **CLAUDE.md 基于骨架生成** — 读取 `templates/_base/claude-md.md.tmpl` 作为结构参考，填入用户确认的路由表、工作流、代理列表等

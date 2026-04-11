@@ -1,0 +1,33 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"$CLAUDE_TOOL_INPUT\" | grep -qE '(rm\\s+-rf\\s+/|sudo\\s+|chmod\\s+777|:\\(\\)\\{|fork\\s+bomb|>\\s*/dev/sda|mkfs\\.)' && echo 'BLOCKED: Dangerous command detected' && exit 2 || exit 0",
+            "timeout": 5
+          }
+        ],
+        "description": "阻止危险的 Bash 命令（rm -rf /、sudo、chmod 777、fork bomb 等）",
+        "id": "pre:bash:block-dangerous"
+      }
+    ],
+    "PostToolUse": [],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{BUILD_CMD}} 2>&1 | tail -5 || echo 'WARNING: 构建检查失败'",
+            "timeout": 60
+          }
+        ],
+        "description": "会话结束时验证项目仍可构建",
+        "id": "stop:build-check"
+      }
+    ]
+  }
+}
