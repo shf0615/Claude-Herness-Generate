@@ -428,7 +428,7 @@ model: sonnet
 ### 语言特定配置
 
 根据用户在阶段 1 提供的技术栈，推断对应的权限和构建命令。
-参考 `templates/_base/settings-typescript.json` 和 `settings-c.json` 获取已有的权限模板。
+参考 `templates/_base/settings-typescript.json`、`settings-c.json`、`settings-python.json`、`settings-go.json` 获取已有的权限模板。
 如果用户使用的技术栈不在模板中（如 Python、Rust、Go 等），则根据该语言的常见工具链自行推断。
 
 **推断原则：**
