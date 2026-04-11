@@ -10,120 +10,53 @@
 
 ## 核心原则
 
-1. **问答优先，生成在后。** 必须在每个阶段结束后停下来等用户回复。
-2. **共同设计，不套模板。** 代理、命令、工作流完全从问答中产生，不是从预设模板中选。
-3. **每次全新设计。** 不读取目标路径或其他项目的已有配置作为参考。
+1. **问答优先，生成在后。** 每个阶段结束后停下来等用户回复。
+2. **共同设计，不套模板。** 代理、命令、工作流完全从问答中产生。
+3. **每次全新设计。** 不读取目标路径或其他项目的已有配置。
 
 ## 路由规则
 
 | 用户意图 | 路由到 | 说明 |
 |---|---|---|
-| 创建新工作空间 | `harness-expert` 代理 | 启动多轮问答流程 |
+| 创建新工作空间 | `harness-expert` 代理 | 8 阶段问答流程（详见代理定义） |
 | "generate"、"创建 harness" | `/generate` 命令 | 快捷方式，路由到代理 |
 | 检查已有工作空间 | `/preview` 命令 | 分析 .claude/ 目录 |
 | 咨询 harness 概念 | 直接回答 | 参考 workspace-generator 技能 |
 
-## 工作流（含硬性停止点）
+## 工作流概要
 
 ```
-用户请求
-    |
-    v
-[按意图路由]
-    |
-    v
-harness-expert 代理
-    |
-    +-- 阶段 1: 基础信息 — 项目名称、描述、技术栈、输出路径
-    |                      （开放式，不限定项目类型和语言选项）
-    |
-    ⛔ STOP — 等用户回答
-    |
-    +-- 阶段 2: 代理设计讨论
-    |   展示建议的代理阵容，逐个说明角色/权限/模型
-    |   用户可以增加、删减、调整，循环直到满意
-    |
-    ⛔ STOP — 等用户确认代理阵容
-    |
-    +-- 阶段 3: 命令 + 技能 + 自动化讨论
-    |   展示建议的命令，讨论是否需要 skill，确定 hooks 级别
-    |   用户可以增加、删减、调整，循环直到满意
-    |
-    ⛔ STOP — 等用户确认
-    |
-    +-- 阶段 4: 工作流编排讨论
-    |   展示代理协作流程图，讨论执行顺序和通信方式
-    |   确定开发方法论（TDD / 标准 / 最小化）
-    |   用户可以调整，循环直到满意
-    |
-    ⛔ STOP — 等用户确认工作流
-    |
-    +-- 阶段 5: 完整预览
-    |   展示全部配置（基础信息 + 代理 + 命令 + 技能 + 规则 + hooks + 工作流 + 文件树）
-    |   选项：确认生成 / 修改代理 / 修改命令 / 修改工作流 / 其他补充 / 取消
-    |
-    ⛔ STOP — 等用户确认
-    |
-    +-- 如果"修改" → 回到对应阶段 → 再次预览
-    +-- 如果"确认生成" ↓
-    |
-    +-- 阶段 6: 生成
-    |     mkdir -> settings.json -> rules/ -> agents/ ->
-    |     skills/ -> commands/ -> hooks.json -> CLAUDE.md
-    |
-    +-- 阶段 7: 验证（JSON、frontmatter、路由表一致性）
-    |
-    +-- 阶段 8: 报告（成功信息 + 清单 + "cd <路径> && claude"）
+阶段 1: 基础信息 → ⛔ STOP
+阶段 2: 代理设计 → ⛔ STOP
+阶段 3: 命令/技能/自动化 → ⛔ STOP
+阶段 4: 工作流编排 → ⛔ STOP
+阶段 5: 完整预览 → ⛔ STOP（确认/修改/取消）
+阶段 6: 生成 → 阶段 7: 验证 → 阶段 8: 报告
 ```
 
-**关键：每个 ⛔ 处代理必须停止等用户。阶段 2/3/4 的设计讨论不可跳过。**
+每个 ⛔ 处代理必须停止等用户。阶段 2/3/4 的设计讨论不可跳过。
+详细流程定义在 `.claude/agents/harness-expert.md` 中。
 
-## 质量门禁
+## 支持的语言模板
 
-| 检查项 | 方法 | 失败处理 |
+| 语言 | 权限模板 | 编码规范 |
 |---|---|---|
-| 所有预期文件存在 | `ls` 每个路径 | 报告缺失文件 |
-| JSON 文件可解析 | `node -e "JSON.parse(...)"` | 修复语法并重试 |
-| Agent frontmatter 有效 | 检查 `---` + 必填字段 | 修复并重试 |
-| CLAUDE.md 路由表与代理对应 | 交叉引用 | 更新路由表 |
-| 权限与技术栈匹配 | 检查 Bash 命令模式 | 修正权限 |
+| TypeScript | `settings-typescript.json` | `typescript.md.tmpl`（26 条） |
+| C | `settings-c.json` | `c-language.md.tmpl`（30 条） |
+| Python | `settings-python.json` | `python.md.tmpl`（32 条） |
+| Go | `settings-go.json` | `go.md.tmpl`（32 条） |
 
-## 错误处理
-
-| 错误 | 处理方式 |
-|---|---|
-| 目标目录已有 `.claude/` | 询问：覆盖 / 取消 |
-| 输出路径无效 | 提示用户修正 |
-| 生成部分失败 | 报告成功和失败的文件，重试 |
-
-## 命名约定
-
-- 项目名：`kebab-case`
-- 代理文件：`kebab-case.md`
-- 命令文件：`kebab-case.md`
-- Hook ID：`phase:tool:action`
+其他语言由代理根据技术栈自行推断。
 
 ## 模板结构
 
-模板仅提供**格式骨架和语言规则**，不含预设的代理或命令：
-
 ```
-templates/
-└── _base/
-    ├── format-reference.md      格式骨架（agent/settings/hooks/command/CLAUDE.md 的格式参考）
-    ├── claude-md.md.tmpl        CLAUDE.md 结构模板
-    ├── settings-typescript.json TypeScript 权限模板
-    ├── settings-c.json          C 权限模板
-    ├── settings-python.json     Python 权限模板
-    ├── settings-go.json         Go 权限模板
-    ├── hooks-minimal.json       最小自动化（无 hooks）
-    ├── hooks-standard.json      标准自动化（阻止危险命令 + 构建检查）
-    ├── hooks-strict.json        严格自动化（+ 自动 lint + 测试检查）
-    └── rules/
-        ├── typescript.md.tmpl   TypeScript 编码规范
-        ├── c-language.md.tmpl   C 编码规范
-        ├── python.md.tmpl       Python 编码规范
-        └── go.md.tmpl           Go 编码规范
+templates/_base/
+├── format-reference.md      格式骨架
+├── claude-md.md.tmpl        CLAUDE.md 结构模板
+├── settings-*.json          各语言权限模板
+├── hooks-{minimal,standard,strict}.json  三级自动化
+└── rules/*.md.tmpl          各语言编码规范
 ```
 
-代理和命令的具体内容完全从问答中产生，不依赖预设模板。
+模板仅提供**格式骨架和语言规则**，代理和命令的具体内容完全从问答中产生。
