@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allowedTools": [
+      "Read(*)",
+      "Edit(*)",
+      "Write(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "Bash(ls *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(cat *)",
+      "Bash(tree *)",
+      "Bash(node -e *)"
+    ]
+  }
+}

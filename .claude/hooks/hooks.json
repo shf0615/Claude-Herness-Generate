@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=\"$CLAUDE_FILE_PATH\"; if echo \"$FILE\" | grep -qE '\\.json$'; then node -e \"JSON.parse(require('fs').readFileSync('$FILE','utf8'))\" 2>&1 || echo \"WARNING: 生成的 JSON 文件无效: $FILE\"; fi",
+            "timeout": 10
+          }
+        ],
+        "description": "写入 JSON 文件后自动验证语法是否正确",
+        "id": "post:write:validate-json"
+      }
+    ]
+  }
+}
