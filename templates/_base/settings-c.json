@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allowedTools": [
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "Bash(make *)",
+      "Bash(cmake *)",
+      "Bash(gcc *)",
+      "Bash(clang *)",
+      "Bash(clang-format *)",
+      "Bash(gdb *)",
+      "Bash(valgrind *)",
+      "Bash(cppcheck *)",
+      "Bash(git *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(mkdir *)",
+      "Bash(tree *)"
+    ]
+  }
+}

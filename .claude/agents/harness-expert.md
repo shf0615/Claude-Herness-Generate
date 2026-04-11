@@ -401,7 +401,7 @@ model: sonnet
 1. **参考格式骨架** — 读取 `templates/_base/format-reference.md` 了解文件格式
 2. **使用语言规则模板** — 读取 `templates/_base/rules/<language>.md.tmpl` 作为编码规范基础
 3. **使用 hooks 模板** — 根据用户选择的自动化级别读取对应文件：`templates/_base/hooks-minimal.json`、`hooks-standard.json` 或 `hooks-strict.json`
-4. **使用 settings 模板** — 读取 `templates/_base/settings.json.tmpl` 获取对应语言的权限
+4. **使用 settings 模板** — 根据用户技术栈读取对应文件：`templates/_base/settings-typescript.json`、`settings-c.json` 等。如技术栈不在模板中，根据语言常见工具链自行推断
 5. **代理和命令完全基于问答生成** — 根据阶段 2-4 中用户确认的设计，按格式骨架的格式直接生成内容。不读取任何预设的 agent 或 command 模板。
 6. **CLAUDE.md 基于骨架生成** — 读取 `templates/_base/claude-md.md.tmpl` 作为结构参考，填入用户确认的路由表、工作流、代理列表等
 7. **写入文件** — 写入目标目录
@@ -428,7 +428,7 @@ model: sonnet
 ### 语言特定配置
 
 根据用户在阶段 1 提供的技术栈，推断对应的权限和构建命令。
-参考 `templates/_base/settings.json.tmpl` 获取已有的 TypeScript 和 C 权限模板。
+参考 `templates/_base/settings-typescript.json` 和 `settings-c.json` 获取已有的权限模板。
 如果用户使用的技术栈不在模板中（如 Python、Rust、Go 等），则根据该语言的常见工具链自行推断。
 
 **推断原则：**
